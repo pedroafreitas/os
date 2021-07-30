@@ -103,6 +103,7 @@ int main(){
     }
     zero2D(allocated, num_of_process, num_of_res);
     print2D(allocated, num_of_process, num_of_res);
+    cout << "\n";
 
     //Para cada elemento da matriz ALLOCATED, adicionar o 
     //número de recursos alocados.
@@ -112,11 +113,11 @@ int main(){
             cin >> allocated[i][j];
         }
     }
-
+    cout << "\n\tALLOCATED";
     print2D(allocated, num_of_process, num_of_res);
 
 
-    cout << "\nNúmero max de recursos";
+    cout << "\n\nNúmero max de recursos";
 
     int** max = new int* [num_of_process];
     for(int i = 0; i < num_of_process; i++){
@@ -124,6 +125,7 @@ int main(){
     }
     zero2D(max, num_of_process, num_of_res);
     print2D(max, num_of_process, num_of_res);
+    cout << "\n";
 
     for(int i = 0; i < num_of_process; i++){
         for(int j = 0; j < num_of_res; j++) {
@@ -131,6 +133,7 @@ int main(){
             cin >> max[i][j];
         }
     }
+    cout << "\n\tMAX";
     print2D(max, num_of_process, num_of_res);
 
     int** need = new int* [num_of_process];
@@ -139,18 +142,22 @@ int main(){
     }
     zero2D(need, num_of_process, num_of_res);
     print2D(need, num_of_process, num_of_res);
+    cout << "\n";
 
     for(int i = 0; i < num_of_process; i++) {
         for(int j = 0; j < num_of_res; j++) {
             need[i][j] = max[i][j] - allocated[i][j];
         }
     }
+    cout << "\n\tNEED";
     print2D(need, num_of_process, num_of_res);
+    cout << "\n";
 
 
     //???total_res???
     int * total_res = new int[num_of_res];
 
+    cout << "\nInsira os valores de total resources para calcular AVAILABLE";
     for (int i = 0; i < num_of_res; i++) {
         cout << "\nTotal para R" << i + 1 << ": ";
         cin >> total_res[i]; 
@@ -164,6 +171,7 @@ int main(){
     int * available = new int[num_of_res];
     for(int i = 0; i < num_of_res; i++) {
         available[i] = total_res[i] - totalAllocated[i];
+        cout << available[i] << "|";
     }
 
 
