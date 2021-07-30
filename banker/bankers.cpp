@@ -1,7 +1,40 @@
 #include <iostream>
 
 using namespace std;
-                    //num_of_rols and cols
+
+
+/*
+------------------------>>> README <<<------------------------
+Desenvolvido por Edsger Dijkstra o algoritmo testa a segurança
+ao simular a alocação da quantidade máxima pré-determinada de 
+todosos recursos.
+
+1. Variáveis:
+
+N: Número de Processos do Sistema
+
+M: Número de tipos de recursos
+
+2. As estruturas usadas são:
+
+AVAILABLE: Um vetor 1d de tamanho m com o número de recursos 
+disponíveis de cada tipo.
+
+MAX: Um vetor 2d de tamanho n*m que define a demanda máxima para
+cada processo do sistema.
+
+ALLOCATED: Um vetor 2d de tamanho n*m que define o número de
+recursos de cada tipo alocado para cada processo.
+
+NEED: Need[i, j] = Max[i, j] - Allocated[i, j]
+
+Observação: as estruturas serão todas preenchidas com 0 no incio 
+do programa.
+
+------------------------>>> README <<<------------------------
+*/
+
+//Soma os valores de dois vetores bidimensionais.
 int* sum2D(int** arr, int rows, int cols){
     int* sum = new int[cols];
     for(int i = 0; i < cols; i++){
@@ -12,17 +45,34 @@ int* sum2D(int** arr, int rows, int cols){
             sum[j] += arr[i][j];
         }
     }
-
-    // cout << "\nSoma do vetor é: ";
-    // for(int i = 0; i < cols; i++){
-    //     cout << sum[i] << "\t";
-    // }
     return sum;
 }
 
-//Compara dois vetores de tamanhos iguais e retorna false
-//se existir algum valor de arr1 maior o valor do mesmo indice
-//no arr2.
+void zero2D(int** arr, int rows, int cols){
+    for(int i = 0; i < rows; i++) {
+        for(int j = 0; j < cols; j++) {
+            arr[i][j] = 0;
+        }
+    }
+}
+
+void print2D(int** arr, int rows, int cols){
+    for(int i = 0; i < rows; i++) {
+        cout << "\n";
+        for(int j = 0; j < cols; j++) {
+            cout << arr[i][j] << "|";
+        }
+        cout << "\n";
+        for(int j = 0; j < cols; j++) {
+            cout << "__";
+        }
+    }
+}
+/*
+Compara dois vetores de tamanhos iguais e retorna false
+se existir algum valor de arr1 maior o valor do mesmo indice
+no arr2.
+*/
 bool compareArray(int* arr1, int* arr2, int n1, int n2) {
     if(n1 != n2){
         return false;
@@ -37,37 +87,43 @@ bool compareArray(int* arr1, int* arr2, int n1, int n2) {
 
 int main(){
     int num_of_res;
-    cout << "\nNumero de recursos: ";
+
+    cout << "\nNumero de recursos (M): ";
     cin >> num_of_res;
 
-    int * total_res = new int[num_of_res];
-    for (int i = 0; i < num_of_res; i++) {
-        cout << "\nTotal para R" << i + 1 << ": ";
-        cin >> total_res[i]; 
-    }
-
     int num_of_process;
-    cout <<  "\nNumero de processos: ";
+    cout <<  "\nNumero de processos (N): ";
     cin >> num_of_process;
 
+
+    //Para cada coluna, alocando a quantidade de processos dada.
     int** allocated = new int* [num_of_process];
     for (int i = 0; i < num_of_process; i++){
         allocated[i] = new int[num_of_res];
     }
-    
+    zero2D(allocated, num_of_process, num_of_res);
+    print2D(allocated, num_of_process, num_of_res);
+
+    //Para cada elemento da matriz ALLOCATED, adicionar o 
+    //número de recursos alocados.
     for(int i = 0; i < num_of_process; i++) {
         for(int j = 0; j < num_of_res; j++) {
-            cout << "\nQuantidade para R" << j + 1 << "alocado para P" << i +1 << ": ";
+            cout << "\nQuantidade para R" << j + 1<< " alocado para P" << i + 1 << ": ";
             cin >> allocated[i][j];
         }
     }
 
-    cout << "\nNumero max de recursos";
+    print2D(allocated, num_of_process, num_of_res);
+
+
+    cout << "\nNúmero max de recursos";
 
     int** max = new int* [num_of_process];
     for(int i = 0; i < num_of_process; i++){
         max[i] = new int[num_of_res];
     }
+    zero2D(max, num_of_process, num_of_res);
+    print2D(max, num_of_process, num_of_res);
 
     for(int i = 0; i < num_of_process; i++){
         for(int j = 0; j < num_of_res; j++) {
@@ -75,9 +131,31 @@ int main(){
             cin >> max[i][j];
         }
     }
+    print2D(max, num_of_process, num_of_res);
 
-    //E  F  G
-    //6  7  8
+    int** need = new int* [num_of_process];
+    for(int i = 0; i < num_of_process; i++) {
+        need[i] = new int[num_of_res];
+    }
+    zero2D(need, num_of_process, num_of_res);
+    print2D(need, num_of_process, num_of_res);
+
+    for(int i = 0; i < num_of_process; i++) {
+        for(int j = 0; j < num_of_res; j++) {
+            need[i][j] = max[i][j] - allocated[i][j];
+        }
+    }
+    print2D(need, num_of_process, num_of_res);
+
+
+    //???total_res???
+    int * total_res = new int[num_of_res];
+
+    for (int i = 0; i < num_of_res; i++) {
+        cout << "\nTotal para R" << i + 1 << ": ";
+        cin >> total_res[i]; 
+    }
+
     //recursos disponíveis
     int *totalAllocated = new int[num_of_res];
 
@@ -88,22 +166,6 @@ int main(){
         available[i] = total_res[i] - totalAllocated[i];
     }
 
-    /*  E  F  G
-    p1  
-    p2
-    p3
-    */
-
-   int** need = new int* [num_of_process];
-   for(int i = 0; i < num_of_process; i++) {
-       need[i] = new int[num_of_res];
-   }
-
-    for(int i = 0; i < num_of_process; i++) {
-        for(int j = 0; j < num_of_res; j++) {
-            need[i][j] = max[i][j] - allocated[i][j];
-        }
-    }
 
     int* safe_state = new int[num_of_process];
     int state_index = 0;
@@ -143,3 +205,6 @@ int main(){
         cout << "\nDeadlock\n";
     }
 }
+
+
+
