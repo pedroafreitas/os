@@ -138,25 +138,25 @@ int  main(){
      monitorInit(0);
 
      MudaArg = 0;
-     pthread_create(&MudaID, Troca, (void *) &MudaArg);
+     pthread_create(&MudaID, NULL, Troca, (void *) (&MudaArg));
      ExibeArg = 1;
-     pthread_create(NULL, Exibe,  &ExibeArg, 0,  &MudaID);
+     pthread_create(&ExibeID, NULL, Exibe,  (void *)(&ExibeArg));
 
      for (i = 0; i < THREADS; i++) {
           incArg[i] = i + 2;
           decArg[i] = incArg[i] + THREADS;
-          pthread_create(NULL, Aumenta, &(incArg[i]),0,  &(incID[i]));
-          pthread_create(NULL, Diminui, &(decArg[i]),0, &(decID[i]));
+          pthread_create(&incID[i], NULL, Aumenta, (void *) (&incArg[i]));
+          pthread_create(&decID[i], NULL, Diminui, (void *) (&decArg[i]));
      }
 
      for (i = 0; i < THREADS; i++) {
-          pthread_join(incID[i], &(incStatus[i]));
-          pthread_join(decID[i], &(decStatus[i]));
+          pthread_join(incID[i], NULL);
+          pthread_join(decID[i], NULL);
      }
-     pthread_join(MudaID, &MudaStatus);
+     pthread_join(MudaID, NULL);
      pthread_join(ExibeID, &ExibeStatus);
 
-     printf("Parent exits ...\n");
+     printf("...\n");
 
      return 0;
 }
