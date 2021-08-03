@@ -61,68 +61,61 @@ pthread_mutex_t   RandNumber;
 void  *Aumenta(void *voidPTR){
      int  *intPTR = (int *) voidPTR;
      int  ID      = *intPTR;
-     int  value, i;
+     int  valor, i;
 
      for (i = 0; i < REPS; i++) {  
           sched_yield();                  //espara um pouco
-          value = counterInc();                
+          valor = counterInc();                
           pthread_mutex_lock(&Access);          
-               printf("   (%d): Contador aumentou"
-                      "(value = %d)\n", ID, value);
+               printf("   (%d): Contador aumentou (= %d)\n", ID, valor);
           pthread_mutex_unlock(&Access);
      }
      pthread_exit(NULL);
 }
 
-void  *Diminui(void *voidPTR)
-{
+void  *Diminui(void *voidPTR) {
      int  *intPTR = (int *) voidPTR;
      int  ID      = *intPTR;
-     int  value, i;
+     int  valor, i;
 
      for (i = 0; i < REPS; i++) {
           sched_yield();
-          value = counterDec();
+          valor = counterDec();
           pthread_mutex_lock(&Access);
-               printf("   (%d): Contador diminuiu"
-                      "(value = %d)\n", ID, value);
+               printf("   (%d): Contador aumentou (= %d)\n", ID, valor);
           pthread_mutex_unlock(&Access);
      }
      pthread_exit(NULL);
 }
 
-void  *Troca(void *voidPTR)
-{
+void  *Troca(void *voidPTR) {
      int  *intPTR = (int *) voidPTR;
      int  ID      = *intPTR;
-     int  value, i;
+     int  valor, i;
 
      for (i = 0; i < REPS/2; i++) {
           sched_yield();
           pthread_mutex_lock(&RandNumber);
-               value = rand() % INC;
+               valor = rand() % INC;
           pthread_mutex_unlock(&RandNumber);
-          counterSet(value);
+          counterSet(valor);
           pthread_mutex_lock(&Access);
-               printf("*** (%d): Trocou para: %d ***\n",
-                      ID, value);
+               printf("*** (%d): Trocou para: %d ***\n", ID, valor);
           pthread_mutex_unlock(&Access);
      }
      pthread_exit(NULL);
 }
 
-void  *Exibe(void *voidPTR)
-{
+void  *Exibe(void *voidPTR) {
      int  *intPTR = (int *) voidPTR;
      int  ID      = *intPTR;
-     int  value, i;
+     int  valor, i;
 
      for (i = 0; i < REPS/2; i++) {
           sched_yield();
-          value = counterGet();
+          valor = counterGet();
           pthread_mutex_lock(&Access);
-               printf("### (%d): Contador: %d ###\n",
-                      ID, value);
+               printf("### (%d): Contador: %d ###\n", ID, valor);
           pthread_mutex_unlock(&Access);
      }
      pthread_exit(NULL);
@@ -131,11 +124,11 @@ void  *Exibe(void *voidPTR)
 
 int  main(){
      pthread_t  incID[THREADS], decID[THREADS];
-     pthread_t  ResetID, DisplayID;
+     pthread_t  MudaID, ExibeID;
      size_t    incStatus[THREADS], decStatus[THREADS];
-     size_t    ResetStatus, DisplayStatus;
+     size_t    MudaStatus, ExibeStatus;
      int       incArg[THREADS], decArg[THREADS];
-     int       ResetArg, DisplayArg;
+     int       MudaArg, ExibeArg;
      int       i;
      
      srand((unsigned) time(NULL));
@@ -144,28 +137,24 @@ int  main(){
      pthread_mutex_init(&RandNumber, NULL);
      monitorInit(0);
 
-     ResetArg = 0;
-     pthread_create(NULL, 0, Troca,  (void *) &ResetArg,
-                0,  &ResetID);
-     DisplayArg = 1;
-     pthread_create(NULL, Exibe,  &DisplayArg,
-                0,  &DisplayID);
+     MudaArg = 0;
+     pthread_create(&MudaID, Troca, (void *) &MudaArg);
+     ExibeArg = 1;
+     pthread_create(NULL, Exibe,  &ExibeArg, 0,  &MudaID);
 
      for (i = 0; i < THREADS; i++) {
           incArg[i] = i + 2;
           decArg[i] = incArg[i] + THREADS;
-          pthread_create(NULL, Aumenta, &(incArg[i]),
-                     0,  &(incID[i]));
-          pthread_create(NULL, Diminui, &(decArg[i]),
-                     0, &(decID[i]));
+          pthread_create(NULL, Aumenta, &(incArg[i]),0,  &(incID[i]));
+          pthread_create(NULL, Diminui, &(decArg[i]),0, &(decID[i]));
      }
 
      for (i = 0; i < THREADS; i++) {
           pthread_join(incID[i], &(incStatus[i]));
           pthread_join(decID[i], &(decStatus[i]));
      }
-     pthread_join(ResetID, &ResetStatus);
-     pthread_join(DisplayID, &DisplayStatus);
+     pthread_join(MudaID, &MudaStatus);
+     pthread_join(ExibeID, &ExibeStatus);
 
      printf("Parent exits ...\n");
 
