@@ -154,7 +154,7 @@ int  main(){
           pthread_join(decID[i], NULL);
      }
      pthread_join(MudaID, NULL);
-     pthread_join(ExibeID, &ExibeStatus);
+     pthread_join(ExibeID, NULL);
 
      printf("...\n");
 
