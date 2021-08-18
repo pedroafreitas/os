@@ -1,6 +1,6 @@
-#include  <pthread.h>
-
 #include  "monitor.h"
+
+#include  <pthread.h>
 
 static  int  c;                 //Contador estático
 static  pthread_mutex_t  MonitorLock;   //Mutex

@@ -41,13 +41,12 @@ O objetivo do programa é sincronizar as quatro operações sobre o contador
 
 ---------------------------->>> Simulando um Monitor <<<----------------------------
 */
+#include  "monitor.h"
 
 #include  <stdio.h>
 #include  <time.h>
 #include  <stdlib.h>
 #include  <pthread.h>
-
-#include  "monitor.h"
 
 #define   REPS         40
 #define   INC           5
